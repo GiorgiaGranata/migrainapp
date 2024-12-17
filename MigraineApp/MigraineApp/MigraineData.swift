@@ -13,22 +13,29 @@ class MigraineData: ObservableObject {
     @Published var tempTimeOfDay: String = ""
     
     
-    @Published var migraines: [MigraineAttack] = []
+    @Published var migraines: [Migraine] = [
+        Migraine(date: Date(), intensity: 7, timeOfDay: "Night", pills: Pills(hasTaken: false), duration: "5h"),
+        Migraine(date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, intensity: 10, timeOfDay: "Morning", pills: Pills(hasTaken: true, medicineName: "Toradol"), duration: "All day"),
+    ]
     
     // Funzione per aggiungere un nuovo attacco
-    func addMigraine() {
+    func addMigraine(  intensity: Int, timeOfDay: String, pills: Pills, duration: String? = nil) {
         
+        resetDate()
         
+        var newMigraine = Migraine (
+            date: tempData,
+            intensity: intensity,
+            timeOfDay: tempTimeOfDay,
+            pills: pills,
+            duration: duration
+        )
         
-        var newMigraine = MigraineAttack(date: tempData, intensity: tempIntensity, type: <#T##String#>, timeOfDay: tempTimeOfDay, tags: <#T##[String]#>, duration: <#T##String#>, resolution: <#T##String#>, pills: <#T##Pills#>)
         migraines.append(newMigraine)
-        resetValues()
         
     }
     
-    func resetValues(){
+    func resetDate(){
         tempData = Date.now
-        tempIntensity = ""
-        tempTimeOfDay = ""
     }
 }

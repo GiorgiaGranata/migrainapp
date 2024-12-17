@@ -9,6 +9,9 @@ import SwiftUI
 
 struct IntensitySelectionView: View {
     @State private var selectedIntensity: Int = 0 // Valore selezionato (da 1 a 10)
+    @State public var selectedDuration: String // Durata selezionata
+    
+    @ObservedObject     var viewModel : MigraineData
     
     var body: some View {
         VStack {
@@ -75,8 +78,9 @@ struct IntensitySelectionView: View {
 }
 
 
-struct IntensitySelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        IntensitySelectionView()
-    }
+#Preview {
+    @Previewable @StateObject var  viewModel = MigraineData()
+    
+    IntensitySelectionView(selectedDuration: "3h", viewModel: viewModel )
 }
+

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct DurationSelectionView: View {
+    @ObservedObject	 var viewModel : MigraineData
+    
     @State private var selectedDuration: String? // Durata selezionata
     @Environment(\.presentationMode) var presentationMode
     
@@ -83,7 +85,7 @@ struct DurationSelectionView: View {
                 Spacer()
                 
                 // Pulsante Next
-                NavigationLink(destination: IntensitySelectionView()) {
+                NavigationLink(destination: IntensitySelectionView(selectedDuration : selectedDuration!,viewModel: viewModel) ) {
                     Text("Next")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
@@ -140,8 +142,10 @@ struct SectorShape: Shape {
     }
 }
 
-struct DurationSelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        DurationSelectionView()
-    }
+
+#Preview {
+    @Previewable @StateObject var  viewModel = MigraineData()
+    
+    DurationSelectionView(viewModel: viewModel )
 }
+

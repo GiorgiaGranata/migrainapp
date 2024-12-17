@@ -7,11 +7,17 @@ import Foundation
 import SwiftUI
 
 struct ResolutionSelectionView: View {
-    @State private var selectedOption: String? = nil // Tiene traccia dell'opzione selezionata
-    @State private var showMedicineInput: Bool = false // Controlla se mostrare l'input per il medicinale
-    @State private var medicineName: String = "" // Tiene traccia del nome del medicinale inserito
+    
+    @State private var selectedOption       : String? = nil // Tiene traccia dell'opzione selezionata
+    @State private var medicineName         : String = "" // Tiene traccia del nome del medicinale inserito
+    
+    @State private var showMedicineInput    : Bool = false // Controlla se mostrare l'input per il medicinale
+    
     @Environment(\.presentationMode) var presentationMode // Gestisce il ritorno alla schermata precedente
-
+    
+    @StateObject var viewModel = MigraineData()
+    
+    
     var body: some View {
         VStack {
             // Intestazione
@@ -90,9 +96,17 @@ struct ResolutionSelectionView: View {
                         selectedOption = "Pills"
                         showMedicineInput = true // Mostra la schermata per l'inserimento del medicinale
                     }
-                    OptionView(icon: "nosign", label: "No pills", isSelected: selectedOption == "No pills") {
+                    OptionView(
+                        icon: "nosign",
+                        label: "No pills",
+                        isSelected: selectedOption == "No pills"
+                    ) {
+                        print("Save Migraine")
                         selectedOption = "No pills"
                         // Azione per l'opzione "No pills"
+                        	
+                        viewModel.addMigraine(intensity: 4, timeOfDay: "Morning", pills: Pills(hasTaken: true,medicineName: "Brufen"))
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 

@@ -14,7 +14,7 @@ struct AddMigraineView: View {
     @State private var intensity: Int = 5
     @State private var type: String = ""
     @State private var timeOfDay: String = ""
-    @State private var tags: String = ""
+    @State private var pills: Pills = Pills(hasTaken: false)
     
     var body: some View {
         NavigationView {
@@ -25,9 +25,9 @@ struct AddMigraineView: View {
                     TextField("Time of Day (e.g., Morning, Night)", text: $timeOfDay)
                 }
                 
-                Section(header: Text("Tags")) {
-                    TextField("Tags (comma separated)", text: $tags)
-                }
+//                Section(header: Text("Tags")) {
+//                    TextField("Tags (comma separated)", text: $tags)
+//                }
                 
                 Section {
                     Button("Save") {
@@ -35,9 +35,8 @@ struct AddMigraineView: View {
                         let newMigraine = Migraine(
                             date: Date(),
                             intensity: intensity,
-                            type: type,
                             timeOfDay: timeOfDay,
-                            tags: tags.components(separatedBy: ", ").map { $0 }
+                            pills: pills
                         )
                         episodes.append(newMigraine)
                         presentationMode.wrappedValue.dismiss()

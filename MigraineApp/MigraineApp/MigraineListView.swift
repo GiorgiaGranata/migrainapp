@@ -9,11 +9,11 @@
 import SwiftUI
 
 struct MigraineListView: View {
-    @State private var episodes: [Migraine] = [
-        Migraine(date: Date(), intensity: 7, type: "Migraine", timeOfDay: "Night", tags: ["5h", "Synflex"]),
-        Migraine(date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, intensity: 10, type: "Migraine with aura", timeOfDay: "Morning", tags: ["All day", "Toradol"])
-    ]
-    
+//    @State private var episodes: [Migraine] = [
+//        Migraine(date: Date(), intensity: 7, type: "Migraine", timeOfDay: "Night", tags: ["5h", "Synflex"]),
+//        Migraine(date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, intensity: 10, type: "Migraine with aura", timeOfDay: "Morning", tags: ["All day", "Toradol"])
+//    ]
+    @StateObject var  viewModel = MigraineData()
     @State private var selectedDuration: String? = nil // Durata selezionata
     @State private var showDurationSelection = false // Per gestire la visualizzazione della schermata di selezione della durata
 
@@ -43,7 +43,7 @@ struct MigraineListView: View {
                 // Lista delle emicranie
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        ForEach(groupedByMonth(), id: \.key) { month, migraines in
+                        ForEach(groupedByMonth(episodes: viewModel.migraines), id: \.key) { month, migraines in
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(month)
                                     .font(.title3)
@@ -61,14 +61,13 @@ struct MigraineListView: View {
             .background(Color(.systemGroupedBackground))
             .navigationBarHidden(true)
             .sheet(isPresented: $showDurationSelection) {
-               
-                DurationSelectionView()
+                DurationSelectionView( viewModel: viewModel )
             }
         }
     }
     
     // Funzione per raggruppare le emicranie per mese
-    private func groupedByMonth() -> [(key: String, value: [Migraine])] {
+    private func groupedByMonth(episodes: [Migraine]) -> [(key: String, value: [Migraine])] {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         let grouped = Dictionary(grouping: episodes) { episode in
@@ -96,9 +95,7 @@ struct MigraineCardView: View {
                 VStack(alignment: .leading) {
                     Text(episode.date, formatter: dateFormatter)
                         .font(.headline)
-                    Text(episode.type)
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
+                    
                 }
                 
                 Spacer()
@@ -109,8 +106,18 @@ struct MigraineCardView: View {
             }
             
             HStack(spacing: 8) {
-                ForEach(episode.tags, id: \.self) { tag in
-                    Text(tag)
+            
+                if let duration = episode.duration {
+                    Text(duration)
+                        .font(.caption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                }
+                
+                if let medicine = episode.pills.medicineName {
+                    Text(medicine)
                         .font(.caption)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -128,14 +135,24 @@ struct MigraineCardView: View {
 }
 
 // Per includere la durata
-struct Migraine: Identifiable {
-    var id = UUID()
-    var date: Date
-    var intensity: Int
-    var type: String
-    var timeOfDay: String
-    var tags: [String]
-    var duration: String? // Nuovo campo per la durata
+class Migraine: Identifiable {
+    var id          = UUID()
+    var date        : Date
+    var intensity   : Int
+    var timeOfDay   : String
+    var pills       : Pills
+    var duration    : String? // Nuovo campo per la durata
+    
+    init(id: UUID = UUID(), date: Date, intensity: Int, timeOfDay: String, pills: Pills, duration: String? = nil) {
+        self.id = id
+        self.date = date
+        self.intensity = intensity
+        self.timeOfDay = timeOfDay
+        self.pills = pills
+        self.duration = duration
+    }
+    
+    
 }
 
 // Data formatter per la data
@@ -145,9 +162,7 @@ let dateFormatter: DateFormatter = {
     return formatter
 }()
 
-
-struct MigraineListView_Previews: PreviewProvider {
-    static var previews: some View {
-        MigraineListView()
-    }
+#Preview{
+    MigraineListView()
 }
+

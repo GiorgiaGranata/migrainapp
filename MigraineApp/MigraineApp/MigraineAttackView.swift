@@ -14,7 +14,6 @@ struct MigraineAttack: Identifiable {
     var intensity: String
     var type: String
     var timeOfDay: String
-    var tags: [String]
     var duration: String
     var resolution: String
     var pills: Pills
