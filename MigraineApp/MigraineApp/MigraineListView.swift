@@ -13,9 +13,9 @@ struct MigraineListView: View {
 //        Migraine(date: Date(), intensity: 7, type: "Migraine", timeOfDay: "Night", tags: ["5h", "Synflex"]),
 //        Migraine(date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, intensity: 10, type: "Migraine with aura", timeOfDay: "Morning", tags: ["All day", "Toradol"])
 //    ]
-    @StateObject var  viewModel = MigraineData()
+    @EnvironmentObject var viewModel : MigraineData
     @State private var selectedDuration: String? = nil // Durata selezionata
-    @State private var showDurationSelection = false // Per gestire la visualizzazione della schermata di selezione della durata
+     // Per gestire la visualizzazione della schermata di selezione della durata
 
     var body: some View {
         NavigationView {
@@ -27,7 +27,7 @@ struct MigraineListView: View {
                 
                 // Pulsante per registrare una nuova emicrania, che apre la schermata per la selezione della durata
                 Button(action: {
-                    showDurationSelection.toggle()
+                    viewModel.showDurationSelection.toggle()
                 }) {
                     Text("Log new migraine")
                         .font(.headline)
@@ -44,6 +44,8 @@ struct MigraineListView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         ForEach(groupedByMonth(episodes: viewModel.migraines), id: \.key) { month, migraines in
+                            
+                            
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(month)
                                     .font(.title3)
@@ -51,7 +53,12 @@ struct MigraineListView: View {
                                     .padding(.horizontal, 16)
                                 
                                 ForEach(migraines) { episode in
+                                    
+                                    
                                     MigraineCardView(episode: episode)
+                                        .onAppear(){
+                                            print( "duration : " + episode.duration!)
+                                        }
                                 }
                             }
                         }
@@ -60,7 +67,7 @@ struct MigraineListView: View {
             }
             .background(Color(.systemGroupedBackground))
             .navigationBarHidden(true)
-            .sheet(isPresented: $showDurationSelection) {
+            .sheet(isPresented: $viewModel.showDurationSelection) {
                 DurationSelectionView( viewModel: viewModel )
             }
         }

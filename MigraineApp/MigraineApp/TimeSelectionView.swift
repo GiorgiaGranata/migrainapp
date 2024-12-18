@@ -7,21 +7,31 @@
 import SwiftUI
 
 struct TimeSelectionView: View {
-    @State private var selectedTime: String? = nil // Tiene traccia dell'opzione selezionata
+    @ObservedObject  var viewModel : MigraineData
+    
+    @State public var selectedIntensity : Int  // Valore selezionato (da 1 a 10)
+    
+    @State public var selectedDuration: String
+    
+   
     @State private var navigateToResolution = false // Controlla se navigare alla ResolutionSelectionView
     
+    @State private var selectedTime: String? = "Morning" // Tiene traccia dell'opzione selezionata
     var body: some View {
-        NavigationView {
+        
             VStack {
                 HStack {
-                    Button(action: {
-                        // Torna alla schermata precedente
-                    }) {
-                        Image(systemName: "arrow.left")
-                            .font(.title2)
-                            .foregroundColor(.black)
-                    }
                     Spacer()
+                    Button(action: {
+                        // Torna indietro alla schermata precedente
+                        viewModel.showDurationSelection = false// Chiude la schermata
+                    }) {
+                        Image(systemName: "x.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.blue)
+                            
+                    }
+                    
                 }
                 .padding(.horizontal)
                 .padding(.top, 16)
@@ -48,7 +58,7 @@ struct TimeSelectionView: View {
                 
                 // Pulsante Next con NavigationLink
                 NavigationLink(
-                    destination: ResolutionSelectionView(), // La vista a cui navigare
+                    destination: ResolutionSelectionView(viewModel: viewModel, selectedIntensity: selectedIntensity, selectedDuration: selectedDuration, selectedTime: selectedTime ?? "Morning"), // La vista a cui navigare
                     isActive: $navigateToResolution // Attiva la navigazione
                 ) {
                     Button(action: {
@@ -71,7 +81,7 @@ struct TimeSelectionView: View {
             }
             .background(Color(.systemGroupedBackground))
             .edgesIgnoringSafeArea(.bottom)
-        }
+        
     }
 }
 
@@ -99,8 +109,7 @@ struct TimeOption: View {
     }
 }
 
-struct TimeSelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        TimeSelectionView()
-    }
+#Preview{
+    	
 }
+

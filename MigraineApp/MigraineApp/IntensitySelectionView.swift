@@ -17,14 +17,17 @@ struct IntensitySelectionView: View {
         VStack {
             
             HStack {
-                Button(action: {
-                    // Azione per tornare indietro
-                }) {
-                    Image(systemName: "arrow.left")
-                        .font(.title2)
-                        .foregroundColor(.black)
-                }
                 Spacer()
+                Button(action: {
+                    // Torna indietro alla schermata precedente
+                    viewModel.showDurationSelection = false// Chiude la schermata
+                }) {
+                    Image(systemName: "x.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                        
+                }
+                
             }
             .padding(.horizontal)
             .padding(.top, 16)
@@ -59,7 +62,7 @@ struct IntensitySelectionView: View {
             Spacer()
             
             // Pulsante Next
-            NavigationLink(destination: TimeSelectionView()) {
+            NavigationLink(destination: TimeSelectionView(viewModel: viewModel, selectedIntensity: selectedIntensity,selectedDuration: selectedDuration)) {
                 Text("Next")
                     .font(.headline)
                     .frame(maxWidth: .infinity)

@@ -10,7 +10,7 @@ import SwiftUI
 struct DurationSelectionView: View {
     @ObservedObject	 var viewModel : MigraineData
     
-    @State private var selectedDuration: String? // Durata selezionata
+    @State private var selectedDuration: String = "3h" // Durata selezionata
     @Environment(\.presentationMode) var presentationMode
     
     let durations = [
@@ -25,15 +25,17 @@ struct DurationSelectionView: View {
             VStack {
                 
                 HStack {
+                    Spacer()
                     Button(action: {
                         // Torna indietro alla schermata precedente
-                        presentationMode.wrappedValue.dismiss() // Chiude la schermata
+                        viewModel.showDurationSelection = false// Chiude la schermata
                     }) {
-                        Image(systemName: "arrow.left")
+                        Image(systemName: "x.circle.fill")
                             .font(.title2)
-                            .foregroundColor(.black)
+                            .foregroundColor(.blue)
+                            
                     }
-                    Spacer()
+                    
                 }
                 .padding(.horizontal)
                 .padding(.top, 16)
@@ -48,26 +50,33 @@ struct DurationSelectionView: View {
                 
                 // Quadrante circolare
                 ZStack {
+                    
+                    
                     ForEach(0..<4) { index in
                         let isSelected = durations[index] == selectedDuration
                         
                         // Sezione del quadrante
-                        SectorShape(startAngle: Angle(degrees: Double(index) * 90),
-                                    endAngle: Angle(degrees: Double(index + 1) * 90))
-                        .fill(isSelected ? Color.blue.opacity(0.3) : Color.clear)
-                            .overlay(
-                                SectorShape(startAngle: Angle(degrees: Double(index) * 90),
-                                            endAngle: Angle(degrees: Double(index + 1) * 90))
-                                    .stroke(Color.blue, lineWidth: 2)
-                            )
+                        SectorShape(startAngle: Angle(degrees: Double(index + 1) * 90),
+                                    endAngle: Angle(degrees: Double(index + 2) * 90))
+                        .fill( isSelected ? Color.blue.opacity(0.3) : Color.clear)
+                        .overlay(
+                            SectorShape(startAngle: Angle(degrees: Double(index+1) * 90),
+                                        endAngle: Angle(degrees: Double(index + 2) * 90))
+                                .stroke(Color.blue, lineWidth: 2)
+                        ).onAppear(){
+                            print("index " + String(index) + " value:" + durations[index])
+                        }
+                        .accessibilityLabel("Duration " + durations[index])
                         
                         // Pulsante cliccabile sopra la sezione
                         Button(action: {
                             selectedDuration = durations[index]
+                            
+                            print(selectedDuration)
                         }) {
                             Rectangle()
                                 .fill(Color.clear) // Area cliccabile trasparente
-                                .frame(width: 120, height: 120) // Rende l'area più grande e cliccabile
+                                .frame(width: 160, height: 160) // Rende l'area più grande e cliccabile
                         }
                         .position(positionForSector(index: index))
                     }
@@ -85,7 +94,7 @@ struct DurationSelectionView: View {
                 Spacer()
                 
                 // Pulsante Next
-                NavigationLink(destination: IntensitySelectionView(selectedDuration : selectedDuration!,viewModel: viewModel) ) {
+                NavigationLink(destination: IntensitySelectionView(selectedDuration : selectedDuration,viewModel: viewModel) ) {
                     Text("Next")
                         .font(.headline)
                         .frame(maxWidth: .infinity)

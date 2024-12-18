@@ -7,6 +7,14 @@ import Foundation
 import SwiftUI
 
 struct ResolutionSelectionView: View {
+    @ObservedObject  var viewModel : MigraineData
+    
+    @State public var selectedIntensity : Int  // Valore selezionato (da 1 a 10)
+    
+    @State public var selectedDuration: String
+    
+    @State public var selectedTime: String // Tiene traccia dell'opzione selezionata
+    
     
     @State private var selectedOption       : String? = nil // Tiene traccia dell'opzione selezionata
     @State private var medicineName         : String = "" // Tiene traccia del nome del medicinale inserito
@@ -15,27 +23,24 @@ struct ResolutionSelectionView: View {
     
     @Environment(\.presentationMode) var presentationMode // Gestisce il ritorno alla schermata precedente
     
-    @StateObject var viewModel = MigraineData()
+    
     
     
     var body: some View {
         VStack {
             // Intestazione
             HStack {
-                Button(action: {
-                    if showMedicineInput {
-                        // Torna alla selezione principale
-                        showMedicineInput = false
-                    } else {
-                        // Torna indietro alla schermata precedente
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }) {
-                    Image(systemName: "arrow.left")
-                        .font(.title2)
-                        .foregroundColor(.black)
-                }
                 Spacer()
+                Button(action: {
+                    // Torna indietro alla schermata precedente
+                    viewModel.showDurationSelection = false// Chiude la schermata
+                }) {
+                    Image(systemName: "x.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                        
+                }
+                
             }
             .padding(.horizontal)
             .padding(.top, 16)
@@ -105,8 +110,7 @@ struct ResolutionSelectionView: View {
                         selectedOption = "No pills"
                         // Azione per l'opzione "No pills"
                         	
-                        viewModel.addMigraine(intensity: 4, timeOfDay: "Morning", pills: Pills(hasTaken: true,medicineName: "Brufen"))
-                        presentationMode.wrappedValue.dismiss()
+                       
                     }
                 }
                 
@@ -116,9 +120,14 @@ struct ResolutionSelectionView: View {
                     if selectedOption == "No pills" {
                         // Azione per "Upload" se l'utente ha selezionato "No pills"
                         print("No pills option uploaded!")
+                        viewModel.addMigraine(intensity: selectedIntensity, timeOfDay: selectedTime, pills: Pills(hasTaken: false),duration: selectedDuration)
+                        viewModel.showDurationSelection = false;
                     } else if selectedOption == "Pills" {
                         // Azione per "Next"
                         showMedicineInput = true
+                        
+                        viewModel.addMigraine(intensity: selectedIntensity, timeOfDay: selectedTime, pills: Pills(hasTaken: true,medicineName: medicineName),duration: selectedDuration)
+                        viewModel.showDurationSelection = false;
                     }
                 }) {
                     Text(selectedOption == "No pills" ? "Upload" : "Next")
@@ -164,9 +173,9 @@ struct OptionView: View {
     }
 }
 
-// Anteprima
-struct ResolutionSelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        ResolutionSelectionView()
-    }
+
+#Preview{
+    @Previewable @StateObject var  viewModel = MigraineData()
+    ResolutionSelectionView(viewModel: viewModel, selectedIntensity: 2,selectedDuration: "", selectedTime: "Morning")
 }
+
