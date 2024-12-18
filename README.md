@@ -1,4 +1,3 @@
-# migrainapp
 # MigraineApp 
 MigraineApp is a SwiftUI-based iOS application designed to help you keep a personal diary of your migraine episodes. With its simple and intuitive interface, you can log detailed information about each migraine, including the date, duration, intensity, time of day, and any medication taken. 
 
