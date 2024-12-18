@@ -40,7 +40,7 @@ struct DurationSelectionView: View {
                 .padding(.horizontal)
                 .padding(.top, 16)
                 
-                // Titolo
+                
                 Text("Duration")
                     .font(.largeTitle)
                     .fontWeight(.bold)

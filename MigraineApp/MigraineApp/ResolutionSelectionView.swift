@@ -74,7 +74,11 @@ struct ResolutionSelectionView: View {
                 
                 Button(action: {
                     // Azione per caricare o salvare il nome del medicinale
-                    
+                    var pill = Pills(hasTaken: true,medicineName: medicineName)
+                    print("With Pills" + (pill.medicineName ?? "no name"))
+                    showMedicineInput = true
+                    viewModel.addMigraine(intensity: selectedIntensity, timeOfDay: selectedTime, pills: pill,duration: selectedDuration)
+                    viewModel.showDurationSelection = false;
                 }) {
                     Text("Upload")
                         .font(.headline)
@@ -122,12 +126,10 @@ struct ResolutionSelectionView: View {
                         print("No pills option uploaded!")
                         viewModel.addMigraine(intensity: selectedIntensity, timeOfDay: selectedTime, pills: Pills(hasTaken: false),duration: selectedDuration)
                         viewModel.showDurationSelection = false;
-                    } else if selectedOption == "Pills" {
+                    } else {
                         // Azione per "Next"
-                        showMedicineInput = true
+                       
                         
-                        viewModel.addMigraine(intensity: selectedIntensity, timeOfDay: selectedTime, pills: Pills(hasTaken: true,medicineName: medicineName),duration: selectedDuration)
-                        viewModel.showDurationSelection = false;
                     }
                 }) {
                     Text(selectedOption == "No pills" ? "Upload" : "Next")
